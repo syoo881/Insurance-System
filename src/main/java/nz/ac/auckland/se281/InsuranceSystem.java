@@ -12,6 +12,17 @@ public class InsuranceSystem {
   }
 
   public void createNewProfile(String userName, String age) {
+    if (userName.length() < 3) {
+      MessageCli.INVALID_USERNAME_TOO_SHORT.printMessage(userName);
+    } // else if () {
+
+    // Need to make a way to filter out duplicate strings
+
+    // }else {
+    // Make an arraylist named userNameList
+
+    // }
+
     // TODO: Complete this method.
   }
 
