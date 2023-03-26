@@ -1,7 +1,6 @@
 package nz.ac.auckland.se281;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import nz.ac.auckland.se281.Main.PolicyType;
 
 public class InsuranceSystem {
@@ -43,19 +42,19 @@ public class InsuranceSystem {
     // Using try-catch to remove the error when string is inserted into age integer.
     try {
       if (userName.length() < 3) {
-        MessageCli.INVALID_USERNAME_TOO_SHORT.printMessage(userName);
-      } else if (Arrays.asList(userNameList).contains(userName)) {
-        MessageCli.INVALID_USERNAME_NOT_UNIQUE.printMessage(userName);
+        MessageCli.INVALID_USERNAME_TOO_SHORT.printMessage(titleCase(userName));
+      } else if (String.join(", ", userNameList).toLowerCase().contains(userName.toLowerCase())) {
+        MessageCli.INVALID_USERNAME_NOT_UNIQUE.printMessage(titleCase(userName));
       } else if ((Integer.parseInt(age) < 0)) {
         MessageCli.INVALID_AGE.printMessage(age, userName);
       } else {
         // Only adding username and age to array if they are valid.
-        userNameList.add(userName);
+        userNameList.add(titleCase(userName));
         ageList.add(age);
         MessageCli.PROFILE_CREATED.printMessage(titleCase(userName), age);
       }
     } catch (NumberFormatException exception) {
-      MessageCli.INVALID_AGE.printMessage(age, userName);
+      MessageCli.INVALID_AGE.printMessage(age, titleCase(userName));
     }
   }
 

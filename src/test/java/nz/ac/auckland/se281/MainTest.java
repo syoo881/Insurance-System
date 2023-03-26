@@ -363,9 +363,15 @@ public class MainTest {
 
     @Test
     public void TY_01_your_own_test() throws Exception {
-      // Write your own test here, in the same format as the other tests.
-      runCommands(PRINT_DB);
-      assertContains("");
+      runCommands(CREATE_PROFILE, "Jordan", "21", CREATE_PROFILE, "Jordan", "35", PRINT_DB);
+      assertContains("Database has 1 profile:");
+      assertContains("1: Jordan, 21");
+
+      assertContains("Usernames must be unique. No profile was created for 'Jordan'.");
+
+      assertDoesNotContain("Database has 0 profiles", true);
+      assertDoesNotContain("Database has 2 profiles", true);
+      assertDoesNotContain("Jordan, 35", true);
     }
 
     @Test
