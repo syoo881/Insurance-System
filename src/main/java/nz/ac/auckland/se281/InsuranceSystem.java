@@ -7,6 +7,7 @@ public class InsuranceSystem {
   private ArrayList userNameList = new ArrayList();
   private ArrayList ageList = new ArrayList();
   private ArrayList<Boolean> profileLoadStatus = new ArrayList<Boolean>();
+  private String currentLoadedUserName = "";
 
   public InsuranceSystem() {
     // Only this constructor can be used (if you need to initialise fields).
@@ -57,7 +58,7 @@ public class InsuranceSystem {
       // If statement to check if profileLoadStatus only has false values
       if (profileLoadStatus.contains(true)) {
         // *print cannot create new profile if profile is loaded, for userName
-        MessageCli.CANNOT_CREATE_WHILE_LOADED.printMessage(titleCase(userName));
+        MessageCli.CANNOT_CREATE_WHILE_LOADED.printMessage(titleCase(currentLoadedUserName));
       } else {
         if (userName.length() < 3) {
           MessageCli.INVALID_USERNAME_TOO_SHORT.printMessage(titleCase(userName));
@@ -94,31 +95,39 @@ public class InsuranceSystem {
     }
   }
 
-  public void loadProfile(String userName) {
-    // TODO: Complete this method.
-
-    // call the method initialiseProfileLoadStatus() to initialise the boolean arraylist
-
-    // * */ Loop through the userNameList arraylist, and if the username matches, then set the
-    // * */ corresponding boolean value to true
+  public void setProfileLoadStatus(String userName) {
     for (int i = 0; i < userNameList.size(); i++) {
       if (userNameList.get(i).equals(titleCase(userName))) {
         resetProfileLoadStatus();
         profileLoadStatus.set(i, true);
-        MessageCli.PROFILE_LOADED.printMessage(titleCase(userName));
       }
     }
+  }
 
+  public void loadProfile(String userName) {
+    // TODO: Complete this method.
+    // set currentUserName to userName
+    currentLoadedUserName = userName;
+    setProfileLoadStatus(userName);
     // If the username doesn't match, then print the error message
     if (!String.join(", ", userNameList).toLowerCase().contains(userName.toLowerCase())) {
       MessageCli.NO_PROFILE_FOUND_TO_LOAD.printMessage(titleCase(userName));
+    } else {
+      MessageCli.PROFILE_LOADED.printMessage(titleCase(userName));
     }
   }
 
   public void unloadProfile() {
     // TODO: Complete this method.
     // Set the boolean values of the arraylist to false
-
+    // check if any profiles are loaded, and if not, print error message
+    if (profileLoadStatus.contains(true)) {
+      resetProfileLoadStatus();
+      MessageCli.PROFILE_UNLOADED.printMessage(titleCase(currentLoadedUserName));
+    } else {
+      resetProfileLoadStatus();
+      MessageCli.NO_PROFILE_LOADED.printMessage();
+    }
   }
 
   public void deleteProfile(String userName) {
@@ -126,10 +135,35 @@ public class InsuranceSystem {
     // Loop through the arraylist, and if the username matches, then remove the username and age
     // from the arraylist
     // If the username doesn't match, then print the error message
-
     // Loop through the Boolean, and if true, then print error, profile is loaded, and can't be
     // deleted
-
+    // if username is not in the list, print no profile was deleted message
+    if (String.join(", ", userNameList).toLowerCase().contains(userName.toLowerCase())) {
+      for (int i = 0; i < userNameList.size(); i++) {
+        if (userNameList.get(i).equals(titleCase(userName))) {
+          if (profileLoadStatus.get(i) == true) {
+            MessageCli.CANNOT_DELETE_PROFILE_WHILE_LOADED.printMessage(titleCase(userName));
+          } else {
+            userNameList.remove(i);
+            ageList.remove(i);
+            MessageCli.PROFILE_DELETED.printMessage(titleCase(userName));
+            // After deleting the profile, reset the profileLoadStatus arraylist
+            if (profileLoadStatus.contains(true)) {
+              resetProfileLoadStatus();
+              for (int j = 0; j < userNameList.size(); j++) {
+                if (userNameList.get(j).equals(titleCase(currentLoadedUserName))) {
+                  profileLoadStatus.set(j, true);
+                }
+              }
+            } else {
+              resetProfileLoadStatus();
+            }
+          }
+        }
+      }
+    } else {
+      MessageCli.NO_PROFILE_FOUND_TO_DELETE.printMessage(titleCase(userName));
+    }
   }
 
   public void createPolicy(PolicyType type, String[] options) {
