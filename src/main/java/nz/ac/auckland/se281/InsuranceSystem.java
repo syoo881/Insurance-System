@@ -8,6 +8,7 @@ public class InsuranceSystem {
   private ArrayList ageList = new ArrayList();
   private ArrayList<Boolean> profileLoadStatus = new ArrayList<Boolean>();
   private String currentLoadedUserName = "";
+  private ArrayList<String> homePolicyList = new ArrayList<String>();
 
   public InsuranceSystem() {
     // Only this constructor can be used (if you need to initialise fields).
@@ -30,8 +31,7 @@ public class InsuranceSystem {
     } else {
       MessageCli.PRINT_DB_POLICY_COUNT.printMessage(String.valueOf(numberOfProfiles), "s", ":");
       for (int i = 0; i < userNameList.size(); i++) {
-        // *Check the i position of the profileLoadStatus arraylist, and if it is true, then add ***
-        // * */ to the start of the userName with the index i
+
         if (profileLoadStatus.get(i) == true) {
           System.out.println(
               "*** " + (i + 1) + ": " + titleCase(userNameList.get(i)) + ", " + ageList.get(i));
@@ -42,7 +42,7 @@ public class InsuranceSystem {
     }
   }
 
-  public String titleCase(Object unmodifieduserName) {
+  private String titleCase(Object unmodifieduserName) {
     // Converting the Object input into a string.
     String stringUnmodifiedUserName = unmodifieduserName.toString();
     // Converting string to lowercase, and uppercasing only the first letter in one line of code.
@@ -57,7 +57,7 @@ public class InsuranceSystem {
     try {
       // If statement to check if profileLoadStatus only has false values
       if (profileLoadStatus.contains(true)) {
-        // *print cannot create new profile if profile is loaded, for userName
+
         MessageCli.CANNOT_CREATE_WHILE_LOADED.printMessage(titleCase(currentLoadedUserName));
       } else {
         if (userName.length() < 3) {
@@ -79,23 +79,21 @@ public class InsuranceSystem {
     }
   }
 
-  public void initialiseProfileLoadStatus() {
+  private void initialiseProfileLoadStatus() {
 
-    // * */ For the size of userNameList, set all values of profileLoadStatus to false
     for (int i = 0; i < userNameList.size(); i++) {
       profileLoadStatus.add(false);
     }
   }
 
-  public void resetProfileLoadStatus() {
+  private void resetProfileLoadStatus() {
 
-    // *For the size of userNameList, set all values of profileLoadStatus to false
     for (int i = 0; i < userNameList.size(); i++) {
       profileLoadStatus.set(i, false);
     }
   }
 
-  public void setProfileLoadStatus(String userName) {
+  private void setProfileLoadStatus(String userName) {
     for (int i = 0; i < userNameList.size(); i++) {
       if (userNameList.get(i).equals(titleCase(userName))) {
         resetProfileLoadStatus();
@@ -105,8 +103,7 @@ public class InsuranceSystem {
   }
 
   public void loadProfile(String userName) {
-    // TODO: Complete this method.
-    // set currentUserName to userName
+
     currentLoadedUserName = userName;
     setProfileLoadStatus(userName);
     // If the username doesn't match, then print the error message
@@ -118,11 +115,10 @@ public class InsuranceSystem {
   }
 
   public void unloadProfile() {
-    // TODO: Complete this method.
-    // Set the boolean values of the arraylist to false
-    // check if any profiles are loaded, and if not, print error message
+    // Unloading the profile, only if it is loaded. After loading, the profileLoadStatus is reset.
     if (profileLoadStatus.contains(true)) {
       resetProfileLoadStatus();
+      currentLoadedUserName = "";
       MessageCli.PROFILE_UNLOADED.printMessage(titleCase(currentLoadedUserName));
     } else {
       resetProfileLoadStatus();
@@ -131,15 +127,10 @@ public class InsuranceSystem {
   }
 
   public void deleteProfile(String userName) {
-    // TODO: Complete this method.
-    // Loop through the arraylist, and if the username matches, then remove the username and age
-    // from the arraylist
-    // If the username doesn't match, then print the error message
-    // Loop through the Boolean, and if true, then print error, profile is loaded, and can't be
-    // deleted
-    // if username is not in the list, print no profile was deleted message
+    // If the userName matches, delete the profile unless it is already loaded.
     if (String.join(", ", userNameList).toLowerCase().contains(userName.toLowerCase())) {
       for (int i = 0; i < userNameList.size(); i++) {
+        // Checking if the profile is loaded before deleting it
         if (userNameList.get(i).equals(titleCase(userName))) {
           if (profileLoadStatus.get(i) == true) {
             MessageCli.CANNOT_DELETE_PROFILE_WHILE_LOADED.printMessage(titleCase(userName));
@@ -147,7 +138,8 @@ public class InsuranceSystem {
             userNameList.remove(i);
             ageList.remove(i);
             MessageCli.PROFILE_DELETED.printMessage(titleCase(userName));
-            // After deleting the profile, reset the profileLoadStatus arraylist
+            // After deleting the profile, reset the profileLoadStatus arraylist with the new loaded
+            // userName
             if (profileLoadStatus.contains(true)) {
               resetProfileLoadStatus();
               for (int j = 0; j < userNameList.size(); j++) {
@@ -166,7 +158,51 @@ public class InsuranceSystem {
     }
   }
 
+  private boolean toBoolean(String toBeBoolean) {
+
+    // if toBeBoolean = "yes" return true. If toBeBoolean = "no" return false.
+    if (toBeBoolean.contains("y")) {
+      return true;
+    } else {
+      return false;
+    }
+  }
+
   public void createPolicy(PolicyType type, String[] options) {
+
+    if (currentLoadedUserName.equals("")) {
+      System.out.println("Need to load a profile in order to create a policy.");
+    } else {
+
+      switch (type) {
+        case HOME:
+          HomePolicy homeInsurance =
+              new HomePolicy(Integer.parseInt(options[0]), options[1], toBoolean(options[2]));
+          // Separate the arraylist with the alphabet of the policy command, and use
+          // a loop to check through the arraylist, and every time the corresponding H,C,L
+          // is found, add the corresponding getters.
+          homePolicyList.add("H");
+          homePolicyList.add(homeInsurance.getAddress());
+          homePolicyList.add(Integer.toString(homeInsurance.getSumInsured()));
+          homeInsurance.calculatePremium();
+          homePolicyList.add(Integer.toString(homeInsurance.getHomePremium()));
+          // Regarding the discounted premium, this can only be done after we figure out a
+          // way to check how many policies are created for each profile.
+
+          // Maybe could do something like if (userPolicyAmount>2){ homePolicyList[i+3] * 0.8}
+
+          MessageCli.NEW_POLICY_CREATED.printMessage(
+              type.toString().toLowerCase(), titleCase(currentLoadedUserName));
+
+          break;
+
+        case CAR:
+          break;
+
+        case LIFE:
+          break;
+      }
+    }
     // TODO: Complete this method.
   }
 }
