@@ -9,15 +9,15 @@ public class HomePolicy extends Policy {
   public HomePolicy(int sumInsured, String address, boolean rental) {
     super(sumInsured);
     this.address = address;
+    this.rental = rental;
     // TODO Auto-generated constructor stub
   }
 
-  @Override
-  public void calculatePremium() {
-    if (rental = true) {
-      homePremium = (int) (sumInsured * 0.02);
+  public void calculatePremium(boolean rentalStatus) {
+    if (rentalStatus == true) {
+      homePremium = (int) ((double) sumInsured * 0.02);
     } else {
-      homePremium = (int) (sumInsured * 0.01);
+      homePremium = (int) ((double) sumInsured * 0.01);
     }
   }
 
