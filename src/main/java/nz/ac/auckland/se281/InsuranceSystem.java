@@ -52,6 +52,8 @@ public class InsuranceSystem {
               policyList.get(i + 1),
               policyList.get(i + 2),
               policyList.get(i + 3),
+              // Converting policyList to double to calculate discounted premium
+              // Then converting it back into a string to input into user's policy string array
               Integer.toString((int) (Double.parseDouble(policyList.get(i + 3)) * 0.9)));
         } else if (policyList.get(i).equals("C")) {
           MessageCli.PRINT_DB_CAR_POLICY.printMessage(
@@ -278,7 +280,8 @@ public class InsuranceSystem {
 
   public void loadProfile(String userName) {
 
-    // Setting the username to be the current loaded one, and checking if profile exists in usernamelist
+    // Setting the username to be the current loaded one
+    // Checking if profile exists in usernamelist
     currentLoadedUserName = userName;
     setProfileLoadStatus(userName);
     if (checkDuplicateUserName(userName) == true) {
@@ -309,13 +312,13 @@ public class InsuranceSystem {
           if (profileLoadStatus.get(i) == true) {
             MessageCli.CANNOT_DELETE_PROFILE_WHILE_LOADED.printMessage(titleCase(userName));
           } else {
-            //removing username,age, policycount and the user's policy.
+            // removing username,age, policycount and the user's policy.
             userNameList.remove(i);
             ageList.remove(i);
             MessageCli.PROFILE_DELETED.printMessage(titleCase(userName));
             policyCount.remove(i);
             userPolicyList.remove(i);
-            //If profile was already loaded, set the profile load status again after deleting.
+            // If profile was already loaded, set the profile load status again after deleting.
             if (profileLoadStatus.contains(true)) {
               resetProfileLoadStatus();
               for (int j = 0; j < userNameList.size(); j++) {
@@ -367,15 +370,16 @@ public class InsuranceSystem {
 
   public void createPolicy(PolicyType type, String[] options) {
 
-    //First check if profile is loaded
+    // First check if profile is loaded
     if (currentLoadedUserName.equals("")) {
       System.out.println("Need to load a profile in order to create a policy.");
     } else {
-      //Using switch case for home, car and life policy
-      //Repeating the creation of policy for the three switch case, and their corresponding fields
+      // Using switch case for home, car and life policy
+      // Repeating the creation of policy for the three switch case, and their corresponding fields
       switch (type) {
         case HOME:
-        //Using constructor to create instance, and adding each policy into the user's policy string array
+          // Using constructor to create instance
+          // Adding each policy into the user's policy string array
           HomePolicy homeInsurance =
               new HomePolicy(Integer.parseInt(options[0]), options[1], toBoolean(options[2]));
           userPolicyList.get(findIndexOf(currentLoadedUserName)).getPolicyList().add("H");
@@ -398,7 +402,7 @@ public class InsuranceSystem {
               type.toString().toLowerCase(), titleCase(currentLoadedUserName));
 
           break;
-        
+
         case CAR:
           CarPolicy carInsurance =
               new CarPolicy(
@@ -429,14 +433,14 @@ public class InsuranceSystem {
 
         case LIFE:
 
-        //For life policy, checking if the user already has a life policy.
+          // For life policy, checking if the user already has a life policy.
           if (userPolicyList
               .get(findIndexOf(currentLoadedUserName))
               .getPolicyList()
               .contains("L")) {
             MessageCli.ALREADY_HAS_LIFE_POLICY.printMessage(titleCase(currentLoadedUserName));
             break;
-            //Checking age limit for life policy.
+            // Checking age limit for life policy.
           } else if (Integer.parseInt(ageList.get(findIndexOf(currentLoadedUserName))) > 100) {
             MessageCli.OVER_AGE_LIMIT_LIFE_POLICY.printMessage(titleCase(currentLoadedUserName));
             break;
