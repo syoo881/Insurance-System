@@ -10,7 +10,6 @@ public class HomePolicy extends Policy {
     super(sumInsured);
     this.address = address;
     this.rental = rental;
-    // TODO Auto-generated constructor stub
   }
 
   public void calculatePremium(boolean rentalStatus) {

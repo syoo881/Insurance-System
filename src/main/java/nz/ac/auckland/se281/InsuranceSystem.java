@@ -22,11 +22,12 @@ public class InsuranceSystem {
     ArrayList<String> policyList = userPolicyList.get(policyIndex).getPolicyList();
     int numberOfElements = policyList.size();
 
+    // Depending on the nuber of policies, printing out the different discounted premium values.
     if (policyCount.get(policyIndex) == 1) {
-      // for the length of the policyList, everytime it finds a string "H", it will use the next 3
-      // values to print out message.Cli.PRINT_DB_HOME_POLICY
 
       for (int i = 0; i < numberOfElements; i++) {
+        // Printing out policies depending on what policy letter assigned to the corresponding
+        // values
         if (policyList.get(i).equals("H")) {
           MessageCli.PRINT_DB_HOME_POLICY.printMessage(
               policyList.get(i + 1),
@@ -87,6 +88,7 @@ public class InsuranceSystem {
               Integer.toString((int) (Double.parseDouble(policyList.get(i + 2)) * 0.8)));
         }
       }
+
     } else if (policyCount.get(policyIndex) == 0) {
 
     }
@@ -95,8 +97,10 @@ public class InsuranceSystem {
   public int calculatePremium(int policyIndex) {
     ArrayList<String> policyList = userPolicyList.get(policyIndex).getPolicyList();
     int numberOfElements = policyList.size();
+    // Using variable premium to sum all the discounted premiums
     int premium = 0;
 
+    // Depending on the number of policy, adding different discounts to premiums
     if (policyCount.get(policyIndex) == 1) {
       for (int i = 0; i < numberOfElements; i++) {
         if (policyList.get(i).equals("H")) {
@@ -135,6 +139,7 @@ public class InsuranceSystem {
   }
 
   public String policySuffix(int policyIndex) {
+    // Setting the suffix of policy depending on how many policies a user has
     String suffix = "";
     if (policyCount.get(policyIndex) == 1) {
       suffix = "y";
@@ -152,19 +157,17 @@ public class InsuranceSystem {
       MessageCli.PRINT_DB_POLICY_COUNT.printMessage("0", "s", ".");
     } else if (numberOfProfiles == 1) {
       MessageCli.PRINT_DB_POLICY_COUNT.printMessage(String.valueOf(numberOfProfiles), ":", "");
-      // * */ If index 0 of profileLoadStatus is true, then add *** to the start of the string
+      // Using if statement to check whether the profile is loaded or not, and adding ***
       if (profileLoadStatus.get(0) == true) {
         MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
             "*** ",
             "1",
             titleCase(userNameList.get(0)),
             ageList.get(0),
+            // Calculating policy and printing it out for every user
             Integer.toString(policyCount.get(0)),
             policySuffix(0),
             Integer.toString(calculatePremium(0)));
-
-        // System.out.println("*** " + "1: " + titleCase(userNameList.get(0)) + ", " +
-        // ageList.get(0));
         printPolicy(0);
       } else {
         MessageCli.PRINT_DB_PROFILE_HEADER_LONG.printMessage(
@@ -242,6 +245,7 @@ public class InsuranceSystem {
           MessageCli.INVALID_AGE.printMessage(age, userName);
         } else {
           // Only adding username and age to array if they are valid.
+          // Also creating empty policy string array for each user and iterating the policy amount.
           userNameList.add(titleCase(userName));
           ageList.add(age);
           MessageCli.PROFILE_CREATED.printMessage(titleCase(userName), age);
@@ -249,9 +253,6 @@ public class InsuranceSystem {
           policyCount.add(0);
           User newUser = new User();
           userPolicyList.add(newUser);
-          // For each new userName added, create a corresponding arraylist of policy for them, using
-          // the constructor from the User class in the User.java file
-
         }
       }
     } catch (NumberFormatException exception) {
@@ -277,13 +278,13 @@ public class InsuranceSystem {
 
   public void loadProfile(String userName) {
 
+    // Setting the username to be the current loaded one, and checking if profile exists in usernamelist
     currentLoadedUserName = userName;
     setProfileLoadStatus(userName);
-    // If the username doesn't match, then print the error message
-    if (!String.join(", ", userNameList).toLowerCase().contains(userName.toLowerCase())) {
-      MessageCli.NO_PROFILE_FOUND_TO_LOAD.printMessage(titleCase(userName));
-    } else {
+    if (checkDuplicateUserName(userName) == true) {
       MessageCli.PROFILE_LOADED.printMessage(titleCase(userName));
+    } else {
+      MessageCli.NO_PROFILE_FOUND_TO_LOAD.printMessage(titleCase(userName));
     }
   }
 
@@ -303,26 +304,18 @@ public class InsuranceSystem {
     // If the userName matches, delete the profile unless it is already loaded.
     if (String.join(", ", userNameList).toLowerCase().contains(userName.toLowerCase())) {
       for (int i = 0; i < userNameList.size(); i++) {
-        // Checking if the profile is loaded before deleting it
+        // Checking if the profile is loaded
         if (userNameList.get(i).equals(titleCase(userName))) {
           if (profileLoadStatus.get(i) == true) {
             MessageCli.CANNOT_DELETE_PROFILE_WHILE_LOADED.printMessage(titleCase(userName));
           } else {
+            //removing username,age, policycount and the user's policy.
             userNameList.remove(i);
             ageList.remove(i);
             MessageCli.PROFILE_DELETED.printMessage(titleCase(userName));
             policyCount.remove(i);
             userPolicyList.remove(i);
-            // After deleting the profile, reset the profileLoadStatus arraylist with the new loaded
-            // userName
-
-            // Maybe use a helper method here, written in the User.java class to help with deleting
-            // the different types of policies (Polictylist)
-
-            // Or alternatively, we can just delete the policycount list, and remove the
-            // corresponding
-            // one completely.
-
+            //If profile was already loaded, set the profile load status again after deleting.
             if (profileLoadStatus.contains(true)) {
               resetProfileLoadStatus();
               for (int j = 0; j < userNameList.size(); j++) {
@@ -342,22 +335,12 @@ public class InsuranceSystem {
   }
 
   private boolean toBoolean(String toBeBoolean) {
-
-    // if toBeBoolean = "yes" return true. If toBeBoolean = "no" return false.
     if (toBeBoolean.contains("y")) {
       return true;
     } else {
       return false;
     }
   }
-
-  // Write a method here, to check the profileLoadStatus, and set the corrresponding true
-  // value of it and the policyAmount arraylist, to iterate the amount of policies
-  // created for each profile.
-
-  // e.g if profileLoadStatus = [true, false, false, false, false] and policyAmount = [1,0,0,0,0]
-
-  // We will be using these helper methods in the createPolicy method, for each policy type.
 
   public void iteratePolicyCount() {
     for (int i = 0; i < profileLoadStatus.size(); i++) {
@@ -384,19 +367,17 @@ public class InsuranceSystem {
 
   public void createPolicy(PolicyType type, String[] options) {
 
+    //First check if profile is loaded
     if (currentLoadedUserName.equals("")) {
       System.out.println("Need to load a profile in order to create a policy.");
     } else {
+      //Using switch case for home, car and life policy
+      //Repeating the creation of policy for the three switch case, and their corresponding fields
       switch (type) {
         case HOME:
+        //Using constructor to create instance, and adding each policy into the user's policy string array
           HomePolicy homeInsurance =
               new HomePolicy(Integer.parseInt(options[0]), options[1], toBoolean(options[2]));
-          // Separate the arraylist with the alphabet of the policy command, and use
-          // a loop to check through the arraylist, and every time the corresponding H,C,L
-          // is found, add the corresponding getters.
-
-          // The bottom part will not work, because if the user deletes a profile, then
-          // We need to find a way to delete the corresponding policy in the arraylist.
           userPolicyList.get(findIndexOf(currentLoadedUserName)).getPolicyList().add("H");
           userPolicyList
               .get(findIndexOf(currentLoadedUserName))
@@ -411,32 +392,17 @@ public class InsuranceSystem {
               .get(findIndexOf(currentLoadedUserName))
               .getPolicyList()
               .add(Integer.toString(homeInsurance.getHomePremium()));
-
           iteratePolicyCount();
-
-          // Regarding the discounted premium, this can only be done after we figure out a
-          // way to check how many policies are created for each profile.
-
-          // Maybe could do something like if (userPolicyAmount>2){ homePolicyList[i+3] * 0.8}
 
           MessageCli.NEW_POLICY_CREATED.printMessage(
               type.toString().toLowerCase(), titleCase(currentLoadedUserName));
 
-          /* System.out.println(
-              userPolicyList.get(findIndexOf(currentLoadedUserName)).getPolicyList().toString());
-          System.out.println(policyCount);
-          System.out.println(profileLoadStatus);
-          System.out.println(userNameList);
-          System.out.println(ageList); */
-
           break;
-
+        
         case CAR:
           CarPolicy carInsurance =
               new CarPolicy(
                   Integer.parseInt(options[0]), options[1], options[2], toBoolean(options[3]));
-          // Using the same method as the home policy, but with the corresponding getters of the car
-          // policy.
           userPolicyList.get(findIndexOf(currentLoadedUserName)).getPolicyList().add("C");
           userPolicyList
               .get(findIndexOf(currentLoadedUserName))
@@ -459,29 +425,19 @@ public class InsuranceSystem {
           MessageCli.NEW_POLICY_CREATED.printMessage(
               type.toString().toLowerCase(), titleCase(currentLoadedUserName));
 
-          /* System.out.println(
-              userPolicyList.get(findIndexOf(currentLoadedUserName)).getPolicyList().toString());
-
-          System.out.println(policyCount);
-          System.out.println(profileLoadStatus);
-          System.out.println(userNameList);
-          System.out.println(ageList); */
-
           break;
 
         case LIFE:
 
-          // If the user already has a life policy, then print message that the user already has a
-          // life policy.
-
+        //For life policy, checking if the user already has a life policy.
           if (userPolicyList
               .get(findIndexOf(currentLoadedUserName))
               .getPolicyList()
               .contains("L")) {
             MessageCli.ALREADY_HAS_LIFE_POLICY.printMessage(titleCase(currentLoadedUserName));
             break;
+            //Checking age limit for life policy.
           } else if (Integer.parseInt(ageList.get(findIndexOf(currentLoadedUserName))) > 100) {
-            // print message userName is over the age limit. No policy was created
             MessageCli.OVER_AGE_LIMIT_LIFE_POLICY.printMessage(titleCase(currentLoadedUserName));
             break;
           } else {
@@ -506,18 +462,9 @@ public class InsuranceSystem {
             MessageCli.NEW_POLICY_CREATED.printMessage(
                 type.toString().toLowerCase(), titleCase(currentLoadedUserName));
 
-            /* System.out.println(
-                userPolicyList.get(findIndexOf(currentLoadedUserName)).getPolicyList().toString());
-
-            System.out.println(policyCount);
-            System.out.println(profileLoadStatus);
-            System.out.println(userNameList);
-            System.out.println(ageList); */
-
             break;
           }
       }
-      // TODO: Complete this method.
     }
   }
 }

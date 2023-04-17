@@ -16,16 +16,14 @@ public class CarPolicy extends Policy {
   }
 
   public void calculatePremium(int age, boolean breakdownStatus) {
-    // check if breakDownStatus is true
+    // check if breakDownStatus is true, and depending on age calculating premium
     if (breakdownStatus == true) {
-      // check if age is less than 25
       if (age < 25) {
         carPremium = (int) ((double) sumInsured * 0.15 + 80);
       } else {
         carPremium = (int) ((double) sumInsured * 0.1 + 80);
       }
     } else {
-      // check if age is less than 25
       if (age < 25) {
         carPremium = (int) ((double) sumInsured * 0.15);
       } else {

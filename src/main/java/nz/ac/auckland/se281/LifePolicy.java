@@ -6,7 +6,6 @@ public class LifePolicy extends Policy {
 
   public LifePolicy(int sumInsured) {
     super(sumInsured);
-    // TODO Auto-generated constructor stub
   }
 
   public void calculatePremium(int age) {
