@@ -244,7 +244,7 @@ public class InsuranceSystem {
         } else if (checkDuplicateUserName(userName) == true) {
           MessageCli.INVALID_USERNAME_NOT_UNIQUE.printMessage(titleCase(userName));
         } else if ((Integer.parseInt(age) < 0)) {
-          MessageCli.INVALID_AGE.printMessage(age, userName);
+          MessageCli.INVALID_AGE.printMessage(age, titleCase(userName));
         } else {
           // Only adding username and age to array if they are valid.
           // Also creating empty policy string array for each user and iterating the policy amount.
@@ -338,7 +338,7 @@ public class InsuranceSystem {
   }
 
   private boolean toBoolean(String toBeBoolean) {
-    if (toBeBoolean.contains("y")) {
+    if (toBeBoolean.toLowerCase().contains("y")) {
       return true;
     } else {
       return false;
